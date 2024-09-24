@@ -1,0 +1,34 @@
+import { ApplicationContactCreateNestedManyWithoutApplicationsInput } from "./ApplicationContactCreateNestedManyWithoutApplicationsInput";
+import { ApplicationDeploymentCreateNestedManyWithoutApplicationsInput } from "./ApplicationDeploymentCreateNestedManyWithoutApplicationsInput";
+import { ApplicationLifecycleDetailCreateNestedManyWithoutApplicationsInput } from "./ApplicationLifecycleDetailCreateNestedManyWithoutApplicationsInput";
+import { ApplicationOrganizationCreateNestedManyWithoutApplicationsInput } from "./ApplicationOrganizationCreateNestedManyWithoutApplicationsInput";
+import { ApplicationSupportDetailCreateNestedManyWithoutApplicationsInput } from "./ApplicationSupportDetailCreateNestedManyWithoutApplicationsInput";
+import { AttestationCreateNestedManyWithoutApplicationsInput } from "./AttestationCreateNestedManyWithoutApplicationsInput";
+
+export type ApplicationCreateInput = {
+  accessesInternet?: boolean | null;
+  applicationContact?: ApplicationContactCreateNestedManyWithoutApplicationsInput;
+  applicationDeployment?: ApplicationDeploymentCreateNestedManyWithoutApplicationsInput;
+  applicationId: string;
+  applicationLifecycleDetails?: ApplicationLifecycleDetailCreateNestedManyWithoutApplicationsInput;
+  applicationOrganization?: ApplicationOrganizationCreateNestedManyWithoutApplicationsInput;
+  applicationSupportDetails?: ApplicationSupportDetailCreateNestedManyWithoutApplicationsInput;
+  attestation?: AttestationCreateNestedManyWithoutApplicationsInput;
+  businessName?: string | null;
+  category?: string | null;
+  confidentialityRating?: string | null;
+  description?: string | null;
+  hasPersonalConfidentialInfo?: boolean | null;
+  hasProtectedHealthInfo?: boolean | null;
+  isLifeSustaining?: boolean | null;
+  isSubjectToPciCompliance?: boolean | null;
+  isSubjectToSoxCompliance?: boolean | null;
+  name?: string | null;
+  overrideServerValidation?: string | null;
+  shortName?: string | null;
+  status?: string | null;
+  subCategory?: string | null;
+  updatedBy: string;
+  version?: string | null;
+  websiteUrl?: string | null;
+};

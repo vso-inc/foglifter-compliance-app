@@ -1,0 +1,31 @@
+import { AssetWhereUniqueInput } from "../asset/AssetWhereUniqueInput";
+import { StringNullableFilter } from "../../util/StringNullableFilter";
+import { DateTimeNullableFilter } from "../../util/DateTimeNullableFilter";
+import { IntNullableFilter } from "../../util/IntNullableFilter";
+import { DateTimeFilter } from "../../util/DateTimeFilter";
+import { BigIntFilter } from "../../util/BigIntFilter";
+import { StringFilter } from "../../util/StringFilter";
+
+export type AssetConfigurationDetailWhereInput = {
+  asset?: AssetWhereUniqueInput;
+  assetTag?: StringNullableFilter;
+  bios?: DateTimeNullableFilter;
+  brand?: StringNullableFilter;
+  cpuCount?: IntNullableFilter;
+  cpuSpeed?: StringNullableFilter;
+  cpuType?: StringNullableFilter;
+  cpuVersion?: StringNullableFilter;
+  created?: DateTimeFilter;
+  id?: BigIntFilter;
+  inService?: DateTimeNullableFilter;
+  lastHardwareScan?: DateTimeNullableFilter;
+  model?: StringNullableFilter;
+  nature?: StringNullableFilter;
+  operatingSystem?: StringNullableFilter;
+  role?: StringNullableFilter;
+  scanExemptReason?: StringNullableFilter;
+  serial?: StringFilter;
+  status?: StringNullableFilter;
+  typeField?: StringNullableFilter;
+  updated?: DateTimeFilter;
+};

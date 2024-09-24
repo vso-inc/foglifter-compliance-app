@@ -1,0 +1,706 @@
+datasource db {
+  provider = "sqlserver"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
+
+model Application {
+  accessesInternet            Boolean?                     @map("accesses_internet")
+  applicationContact          ApplicationContact[]
+  applicationDeployment       ApplicationDeployment[]
+  applicationId               String                       @map("application_id") @db.VarChar(100)
+  applicationLifecycleDetails ApplicationLifecycleDetail[]
+  applicationOrganization     ApplicationOrganization[]
+  applicationSupportDetails   ApplicationSupportDetail[]
+  attestation                 Attestation[]
+  businessName                String?                      @map("business_name") @db.VarChar(255)
+  category                    String?                      @db.VarChar(255)
+  confidentialityRating       String?                      @map("confidentiality_rating") @db.VarChar(15)
+  created                     DateTime                     @default(now(), map: "DF__applicati__creat__6754599E") @db.DateTime
+  description                 String?                      @db.VarChar(4000)
+  hasPersonalConfidentialInfo Boolean?                     @map("has_personal_confidential_info")
+  hasProtectedHealthInfo      Boolean?                     @map("has_protected_health_info")
+  id                          Int                          @id(map: "pk_application_id") @default(autoincrement()) @map("app_id")
+  isLifeSustaining            Boolean?                     @map("is_life_sustaining")
+  isSubjectToPciCompliance    Boolean?                     @map("is_subject_to_pci_compliance")
+  isSubjectToSoxCompliance    Boolean?                     @map("is_subject_to_sox_compliance")
+  name                        String?                      @db.VarChar(1024)
+  overrideServerValidation    String?                      @map("override_server_validation") @db.VarChar(15)
+  shortName                   String?                      @map("short_name") @db.VarChar(255)
+  status                      String?                      @db.VarChar(75)
+  subCategory                 String?                      @map("sub_category") @db.VarChar(255)
+  updated                     DateTime                     @default(now(), map: "DF__applicati__updat__68487DD7") @db.DateTime
+  updatedBy                   String                       @map("updated_by") @db.VarChar(55)
+  version                     String?                      @db.VarChar(255)
+  websiteUrl                  String?                      @map("website_url") @db.VarChar(1024)
+
+  @@map("application")
+}
+
+model ApplicationContact {
+  application   Application @relation(fields: [app_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  app_id        Int
+  applicationId String      @map("application_id") @db.VarChar(255)
+  contact       Contact     @relation(fields: [contact_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  contact_id    Int
+  created       DateTime    @default(now(), map: "DF__applicati__creat__00200768") @db.DateTime
+  id            Int         @id(clustered: false, map: "pk_application_contact") @default(autoincrement()) @map("app_contact_id")
+  roleEnds      DateTime?   @map("role_ends") @db.SmallDateTime
+  roleStarts    DateTime?   @map("role_starts") @db.SmallDateTime
+  roleType      String      @map("role_type") @db.VarChar(255)
+  updated       DateTime    @default(now(), map: "DF__applicati__updat__01142BA1") @db.DateTime
+  updatedBy     String      @map("updated_by") @db.VarChar(55)
+
+  @@map("application_contact")
+}
+
+model ApplicationDeployment {
+  application      Application? @relation(fields: [app_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  app_id           Int?
+  asset            Asset?       @relation(fields: [asset_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  asset_id         BigInt?
+  created          DateTime     @default(now(), map: "DF__applicati__creat__70DDC3D8") @db.DateTime
+  deploymentId     String?      @map("deployment_id") @db.VarChar(15)
+  deploymentName   String?      @map("deployment_name") @db.VarChar(255)
+  deploymentNote   String?      @map("deployment_note") @db.VarChar(4000)
+  deploymentStatus String?      @map("deployment_status") @db.VarChar(35)
+  deploymentType   String?      @map("deployment_type") @db.VarChar(35)
+  id               Int          @id(map: "pk_application_deployment_id") @default(autoincrement()) @map("application_deployment_id")
+  updated          DateTime     @default(now(), map: "DF__applicati__updat__71D1E811") @db.DateTime
+  updatedBy        String       @map("updated_by") @db.VarChar(55)
+
+  @@map("application_deployment")
+}
+
+model ApplicationLifecycleDetail {
+  actualDecommission  DateTime?    @map("actual_decommission") @db.SmallDateTime
+  actualRetirement    DateTime?    @map("actual_retirement") @db.DateTime
+  application         Application? @relation(fields: [app_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  app_id              Int?
+  decommissionProcess String?      @map("decommission_process") @db.VarChar(1024)
+  decommissionState   String?      @map("decommission_state") @db.VarChar(1024)
+  id                  Int          @id(map: "pk_application_lifecycle_details_id") @default(autoincrement()) @map("application_lifecycle_details_id")
+  isDrEnabled         Boolean?     @map("is_dr_enabled")
+  plannedDecommission DateTime?    @map("planned_decommission") @db.SmallDateTime
+  plannedRetirement   DateTime?    @map("planned_retirement") @db.DateTime
+
+  @@map("application_lifecycle_details")
+}
+
+model ApplicationOrganization {
+  application Application @relation(fields: [app_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  app_id      Int
+  created     DateTime    @default(now(), map: "DF__applicati__creat__778AC167") @db.DateTime
+  id          Int         @id(map: "pk_app_org_id") @default(autoincrement()) @map("app_org_id")
+  level       Int         @default(1, map: "DF__applicati__level__76969D2E") @db.TinyInt
+  name        String?     @db.VarChar(255)
+  typeField   String      @map("type") @db.VarChar(35)
+  updated     DateTime    @default(now(), map: "DF__applicati__updat__787EE5A0") @db.DateTime
+  updatedBy   String      @map("updated_by") @db.VarChar(55)
+
+  @@map("application_organization")
+}
+
+model ApplicationSupportDetail {
+  application                            Application? @relation(fields: [app_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  app_id                                 Int?
+  businessRequiredRecoveryPointObjective String?      @map("business_required_recovery_point_objective") @db.VarChar(255)
+  businessRequiredRecoveryTimeObjective  String?      @map("business_required_recovery_time_objective") @db.VarChar(255)
+  id                                     Int          @id(map: "pk_application_support_details_id") @default(autoincrement()) @map("application_support_details_id")
+  infrastructureSupport                  String?      @map("infrastructure_support") @db.VarChar(255)
+  owningOrganization                     String?      @map("owning_organization") @db.VarChar(255)
+  owningSubOrganization                  String?      @map("owning_sub_organization") @db.VarChar(255)
+  recoveryPointCapability                String?      @map("recovery_point_capability") @db.VarChar(255)
+  recoveryTimeCapability                 String?      @map("recovery_time_capability") @db.VarChar(7500)
+  resiliencyTier                         String?      @map("resiliency_tier") @db.VarChar(255)
+  support                                String?      @db.VarChar(255)
+  supportOrganization                    String?      @map("support_organization") @db.VarChar(255)
+  supportTier                            String?      @map("support_tier") @db.VarChar(255)
+
+  @@map("application_support_details")
+}
+
+model Asset {
+  altId                           BigInt?                     @map("alt_id")
+  appServerId                     Int?                        @map("app_server_id")
+  applicationDeployment           ApplicationDeployment[]
+  applicationHostId               BigInt?                     @map("application_host_id")
+  assetConfigurationDetails       AssetConfigurationDetail[]
+  assetLocationDetails            AssetLocationDetail[]
+  assetNetworkDetails             AssetNetworkDetail[]
+  assetSupportDetails             AssetSupportDetail[]
+  assigned                        String?                     @db.VarChar(255)
+  attestationHost                 AttestationHost[]
+  bigfixRequest                   BigfixRequest[]
+  created                         DateTime                    @default(now(), map: "DF__asset__created__3C69FB99") @db.DateTime
+  datasourceDevices               DatasourceDevice[]
+  description                     String?                     @db.VarChar(4000)
+  endpointManagementSolution      EndpointManagementSolution? @relation(fields: [endpoint_management_solution_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  endpoint_management_solution_id Int?
+  enterpriseId                    String?                     @map("enterprise_id") @db.VarChar(25)
+  exception                       Exception[]
+  id                              BigInt                      @id(map: "pk_asset_id") @default(autoincrement()) @map("asset_id")
+  ipAddress                       IpAddress[]
+  isLocked                        Boolean?                    @map("is_locked")
+  isShared                        Boolean?                    @map("is_shared")
+  maintenanceWindow               MaintenanceWindow[]
+  note                            String?                     @db.VarChar(2000)
+  operationsCalendar              OperationsCalendar[]
+  rebootWindow                    RebootWindow[]
+  subMgmtChangeLog                SubMgmtChangeLog[]
+  systemBackupId                  Int?                        @map("system_backup_id")
+  systemCitrixId                  Int?                        @map("system_citrix_id")
+  tag                             String?                     @db.VarChar(35)
+  tssChangeLog                    TssChangeLog[]
+  updated                         DateTime                    @default(now(), map: "DF__asset__updated__3D5E1FD2") @db.DateTime
+  updatedBy                       String                      @map("updated_by") @db.VarChar(55)
+
+  @@map("asset")
+}
+
+model AssetConfigurationDetail {
+  asset            Asset?    @relation(fields: [asset_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  asset_id         BigInt?
+  assetTag         String?   @map("asset_tag") @db.VarChar(255)
+  bios             DateTime? @db.DateTime
+  brand            String?   @db.VarChar(255)
+  cpuCount         Int?      @map("cpu_count") @db.SmallInt
+  cpuSpeed         String?   @map("cpu_speed") @db.VarChar(255)
+  cpuType          String?   @map("cpu_type") @db.VarChar(55)
+  cpuVersion       String?   @map("cpu_version") @db.VarChar(55)
+  created          DateTime  @default(now(), map: "DF__asset_con__creat__4BAC3F29") @db.DateTime
+  id               BigInt    @id(map: "pk_asset_configuration_details_id") @default(autoincrement()) @map("asset_configuration_details_id")
+  inService        DateTime? @map("in_service") @db.DateTime
+  lastHardwareScan DateTime? @map("last_hardware_scan") @db.DateTime
+  model            String?   @db.VarChar(255)
+  nature           String?   @db.VarChar(55)
+  operatingSystem  String?   @map("operating_system") @db.VarChar(255)
+  role             String?   @db.VarChar(15)
+  scanExemptReason String?   @map("scan_exempt_reason") @db.VarChar(55)
+  serial           String    @db.VarChar(255)
+  status           String?   @db.VarChar(35)
+  typeField        String?   @map("type") @db.VarChar(35)
+  updated          DateTime  @default(now(), map: "DF__asset_con__updat__4CA06362") @db.DateTime
+
+  @@map("asset_configuration_details")
+}
+
+model AssetLocationDetail {
+  asset            Asset?   @relation(fields: [asset_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  asset_id         BigInt?
+  created          DateTime @default(now(), map: "DF__asset_loc__creat__46E78A0C") @db.DateTime
+  id               BigInt   @id(map: "pk_asset_location_details_id") @default(autoincrement()) @map("asset_location_details_id")
+  inDataCenter     Boolean? @map("in_data_center")
+  locationBuilding String?  @map("location_building") @db.VarChar(255)
+  locationCode     String?  @map("location_code") @db.VarChar(255)
+  locationFloor    String?  @map("location_floor") @db.VarChar(255)
+  locationFull     String?  @map("location_full") @db.VarChar(255)
+  locationGrid     String?  @map("location_grid") @db.VarChar(255)
+  locationPhysical String?  @map("location_physical") @db.VarChar(255)
+  region           String?  @db.VarChar(255)
+  serviceArea      String?  @map("service_area") @db.VarChar(255)
+  updated          DateTime @default(now(), map: "DF__asset_loc__updat__47DBAE45") @db.DateTime
+
+  @@map("asset_location_details")
+}
+
+model AssetNetworkDetail {
+  asset             Asset?      @relation(fields: [asset_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  asset_id          BigInt?
+  created           DateTime    @default(now(), map: "DF__asset_net__creat__4222D4EF") @db.DateTime
+  dnsName           String?     @map("dns_name") @db.VarChar(255)
+  domain            String?     @db.VarChar(255)
+  hostname          String      @unique @db.VarChar(255)
+  id                BigInt      @id(map: "pk_asset_network_details_id") @default(autoincrement()) @map("asset_network_details_id")
+  ipAddress         IpAddress[]
+  macAddress        String?     @map("mac_address") @db.VarChar(512)
+  memberOfCluster   String?     @map("member_of_cluster") @db.VarChar(255)
+  previousHostname  String?     @map("previous_hostname") @db.VarChar(255)
+  primaryMacAddress String?     @map("primary_mac_address") @db.VarChar(255)
+  updated           DateTime    @default(now(), map: "DF__asset_net__updat__4316F928") @db.DateTime
+
+  @@map("asset_network_details")
+}
+
+model AssetSupportDetail {
+  activityBasedCosting        Int?                @map("activity_based_costing")
+  asset                       Asset?              @relation(fields: [asset_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  asset_id                    BigInt?
+  assetSupportVendor          AssetSupportVendor? @relation(fields: [support_vendor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  support_vendor_id           Int?
+  created                     DateTime            @default(now(), map: "DF__asset_sup__creat__5441852A") @db.DateTime
+  id                          BigInt              @id(map: "pk_asset_support_details_id") @default(autoincrement()) @map("asset_support_details_id")
+  resourceUnitId              BigInt?             @map("resource_unit_id")
+  supportContractEndDate      DateTime?           @map("support_contract_end_date") @db.SmallDateTime
+  supportContractId           Int?                @map("support_contract_id")
+  supportContractRenewalCost  Decimal?            @map("support_contract_renewal_cost") @db.Decimal(10, 2)
+  supportContractRenewalDate  DateTime?           @map("support_contract_renewal_date") @db.SmallDateTime
+  supportContractRenewalNotes String?             @map("support_contract_renewal_notes") @db.VarChar(2000)
+  supportContractRenewalTerm  String?             @map("support_contract_renewal_term") @db.VarChar(25)
+  supportContractStartDate    DateTime?           @map("support_contract_start_date") @db.SmallDateTime
+  updated                     DateTime            @default(now(), map: "DF__asset_sup__updat__5535A963") @db.DateTime
+
+  @@map("asset_support_details")
+}
+
+model AssetSupportVendor {
+  assetSupportDetails       AssetSupportDetail[]
+  created                   DateTime             @default(now(), map: "DF__asset_sup__creat__5070F446") @db.DateTime
+  id                        Int                  @id(map: "pk_asset_support_vendor_id") @default(autoincrement()) @map("asset_support_vendor_id")
+  supportVendorContactEmail String?              @map("support_vendor_contact_email") @db.VarChar(255)
+  supportVendorContactFax   String?              @map("support_vendor_contact_fax") @db.VarChar(25)
+  supportVendorContactName  String?              @map("support_vendor_contact_name") @db.VarChar(255)
+  supportVendorContactNotes String?              @map("support_vendor_contact_notes") @db.VarChar(2000)
+  supportVendorContactPhone String?              @map("support_vendor_contact_phone") @db.VarChar(25)
+  supportVendorName         String               @map("support_vendor_name") @db.VarChar(255)
+  updated                   DateTime             @default(now(), map: "DF__asset_sup__updat__5165187F") @db.DateTime
+
+  @@map("asset_support_vendor")
+}
+
+model Attestation {
+  alternateContactEmail             String?           @map("alternate_contact_email") @db.VarChar(255)
+  alternateContactNuid              String?           @map("alternate_contact_nuid") @db.VarChar(50)
+  application                       Application       @relation(fields: [app_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  app_id                            Int
+  attestationHost                   AttestationHost[]
+  attestationType                   AttestationType   @relation(fields: [attestation_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  attestation_type_id               Int
+  caseId                            String?           @map("case_id") @db.VarChar(15)
+  connectedToAThirdPartySystem      Boolean           @default(false, map: "DF__attestati__conne__489AC854") @map("connected_to_a_third_party_system")
+  created                           DateTime          @default(now(), map: "DF__attestati__creat__4A8310C6") @db.DateTime
+  guid                              String            @db.VarChar(255)
+  hasSensitiveData                  Boolean           @default(false, map: "DF__attestati__has_s__498EEC8D") @map("has_sensitive_data")
+  id                                Int               @id(map: "pk_attestation_id") @default(autoincrement()) @map("attestation_id")
+  impactedRegion                    String?           @map("impacted_region") @db.VarChar(255)
+  isEmergencyRequest                Boolean           @default(false, map: "DF__attestati__is_em__46B27FE2") @map("is_emergency_request")
+  isPermanentRequest                Boolean           @default(false, map: "DF__attestati__is_pe__47A6A41B") @map("is_permanent_request")
+  justification                     String            @db.VarChar(255)
+  longTermSolution                  String?           @map("long_term_solution") @db.VarChar(Max)
+  mitigatingCompensatingControls    String?           @map("mitigating_compensating_controls") @db.VarChar(Max)
+  owningOrganization                String?           @map("owning_organization") @db.VarChar(255)
+  primaryContactEmail               String            @map("primary_contact_email") @db.VarChar(255)
+  primaryContactNuid                String            @map("primary_contact_nuid") @db.VarChar(50)
+  remediationPlan                   String?           @map("remediation_plan") @db.VarChar(Max)
+  remediationPlanTargetedCompletion DateTime?         @map("remediation_plan_targeted_completion") @db.SmallDateTime
+  response                          String?           @db.VarChar(Max)
+  riskManagementOption              String?           @map("risk_management_option") @db.VarChar(55)
+  sentToThirdParty                  DateTime?         @map("sent_to_third_party") @db.SmallDateTime
+  status                            String            @db.VarChar(35)
+  updated                           DateTime          @default(now(), map: "DF__attestati__updat__4B7734FF") @db.DateTime
+  updatedBy                         String            @map("updated_by") @db.VarChar(55)
+
+  @@map("attestation")
+}
+
+model AttestationHost {
+  asset                   Asset                   @relation(fields: [asset_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  asset_id                BigInt
+  attestation             Attestation             @relation(fields: [attestation_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  attestation_id          Int
+  attestationHostFixlet   AttestationHostFixlet[]
+  created                 DateTime                @default(now(), map: "DF__attestati__creat__503BEA1C") @db.DateTime
+  id                      Int                     @id(map: "pk_attestation_host_id") @default(autoincrement()) @map("attestation_host_id")
+  isSupportedByThirdParty Boolean?                @map("is_supported_by_third_party")
+  updated                 DateTime                @default(now(), map: "DF__attestati__updat__51300E55") @db.DateTime
+  updatedBy               String                  @map("updated_by") @db.VarChar(55)
+
+  @@map("attestation_host")
+}
+
+model AttestationHostFixlet {
+  attestationHost         AttestationHost    @relation(fields: [attestation_host_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  attestation_host_id     Int
+  checklistId             Int?               @map("checklist_id")
+  checklistName           String?            @map("checklist_name") @db.VarChar(255)
+  created                 DateTime           @default(now(), map: "DF__attestati__creat__55F4C372") @db.DateTime
+  id                      Int                @id(map: "pk_attestation_host_fixlet") @default(autoincrement()) @map("attestation_host_fixlet_id")
+  name                    String             @db.VarChar(255)
+  patchChannelFixlet      PatchChannelFixlet @relation(fields: [patch_channel_fixlet_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  patch_channel_fixlet_id Int
+  tssSpec                 String?            @map("tss_spec") @db.VarChar(15)
+  updated                 DateTime           @default(now(), map: "DF__attestati__updat__56E8E7AB") @db.DateTime
+  updatedBy               String             @map("updated_by") @db.VarChar(55)
+
+  @@map("attestation_host_fixlet")
+}
+
+model AttestationType {
+  attestation Attestation[]
+  created     DateTime      @default(now(), map: "DF__attestati__creat__42E1EEFE") @db.DateTime
+  description String        @db.VarChar(2000)
+  id          Int           @id(map: "pk_attestation_type_id") @default(autoincrement()) @map("attestation_type_id")
+  name        String        @db.VarChar(255)
+  updated     DateTime      @default(now(), map: "DF__attestati__updat__43D61337") @db.DateTime
+  updatedBy   String        @map("updated_by") @db.VarChar(55)
+
+  @@map("attestation_type")
+}
+
+model BigfixContentResult {
+  applicable         Boolean
+  contentId          BigInt    @map("content_id")
+  created            DateTime  @default(now(), map: "DF__bigfix_co__creat__6383C8BA") @db.DateTime
+  datasourceDeviceId BigInt    @map("datasource_device_id")
+  datasourceSiteId   BigInt    @map("datasource_site_id")
+  firstRelevant      DateTime? @map("first_relevant") @db.DateTime
+  id                 BigInt    @id(map: "pk_bigfix_content_result_id") @default(autoincrement()) @map("bigfix_content_result_id")
+  lastNonRelevant    DateTime? @map("last_non_relevant") @db.DateTime
+  lastRelevant       DateTime? @map("last_relevant") @db.DateTime
+  relevant           Boolean
+  resolved           Boolean
+  reverted           Boolean
+  typeField          Int       @map("type") @db.TinyInt
+  updated            DateTime  @default(now(), map: "DF__bigfix_co__updat__6477ECF3") @db.DateTime
+
+  @@map("bigfix_content_result")
+}
+
+model BigfixRequest {
+  actionScriptId          Int?               @map("action_script_id")
+  asset                   Asset?             @relation(fields: [asset_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  asset_id                BigInt?
+  bigfixEnvironment       Int                @default(1, map: "DF__bigfix_re__bigfi__5BE2A6F2") @map("bigfix_environment") @db.TinyInt
+  bigfixRequestType       BigfixRequestType? @relation(fields: [request_type], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  request_type            Int?
+  computerId              Int?               @map("computer_id")
+  computerStatus          Int?               @map("computer_status") @db.TinyInt
+  created                 DateTime           @default(now(), map: "DF__bigfix_re__creat__5DCAEF64") @db.DateTime
+  httpResponse            String?            @map("http_response") @db.VarChar(15)
+  httpResponseMessage     String?            @map("http_response_message") @db.VarChar(1024)
+  id                      BigInt             @id(map: "pk_bigfix_request_id") @default(autoincrement()) @map("bigfix_request_id")
+  request                 String?            @db.Xml
+  requestComputerSettings String?            @map("request_computer_settings") @db.NVarChar(Max)
+  requestStatus           String             @default("pending", map: "DF__bigfix_re__reque__5CD6CB2B") @map("request_status") @db.VarChar(35)
+  response                String?            @db.VarChar(Max)
+  subMgmtChangeLog        SubMgmtChangeLog[]
+  tssChangeLog            TssChangeLog[]
+  updated                 DateTime           @default(now(), map: "DF__bigfix_re__updat__5EBF139D") @db.DateTime
+  updatedBy               String             @map("updated_by") @db.VarChar(55)
+
+  @@map("bigfix_request")
+}
+
+model BigfixRequestType {
+  bigfixRequest BigfixRequest[]
+  id            Int             @id(map: "pk_bigfix_request_type_id") @default(autoincrement()) @map("bigfix_request_type_id")
+  requestType   String          @map("request_type") @db.VarChar(55)
+
+  @@map("bigfix_request_type")
+}
+
+model ConfigModel {
+  configName  String   @map("config_name") @db.VarChar(255)
+  configValue String?  @map("config_value") @db.Text
+  created     DateTime @default(now(), map: "DF__config__created__719CDDE7") @db.DateTime
+  description String?  @db.Text
+  id          Int      @id(map: "pk_config_id") @default(autoincrement()) @map("config_id")
+  updated     DateTime @default(now(), map: "DF__config__updated__72910220") @db.DateTime
+  updatedBy   String   @map("updated_by") @db.VarChar(55)
+
+  @@map("config")
+}
+
+model Contact {
+  applicationContact ApplicationContact[]
+  created            DateTime             @default(now(), map: "DF__contact__created__7C4F7684") @db.DateTime
+  department         String?              @db.VarChar(255)
+  email              String?              @db.VarChar(255)
+  firstName          String?              @map("first_name") @db.VarChar(255)
+  id                 Int                  @id(clustered: false, map: "pk_contact_id") @default(autoincrement()) @map("contact_id")
+  lastName           String?              @map("last_name") @db.VarChar(255)
+  nuid               String               @db.VarChar(50)
+  operationsCalendar OperationsCalendar[]
+  reportsTo          Int?                 @map("reports_to")
+  title              String?              @db.VarChar(255)
+  updated            DateTime             @default(now(), map: "DF__contact__updated__7D439ABD") @db.DateTime
+  updatedBy          String               @map("updated_by") @db.VarChar(55)
+  workPhone          String?              @map("work_phone") @db.VarChar(21)
+
+  @@map("contact")
+}
+
+model DatasourceDevice {
+  asset          Asset?    @relation(fields: [asset_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  asset_id       BigInt?
+  created        DateTime  @default(now(), map: "DF__datasourc__creat__31B762FC") @db.DateTime
+  datasourceId   Int?      @map("datasource_id")
+  id             BigInt    @id(map: "pk_datasource_device_id") @default(autoincrement()) @map("datasource_device_id")
+  isDeleted      Boolean?  @map("is_deleted")
+  isLocked       Boolean?  @map("is_locked")
+  lastReportSent DateTime? @map("last_report_sent") @db.DateTime
+  lastReportTime DateTime? @map("last_report_time") @db.DateTime
+  name           String?   @db.NVarChar(255)
+  reportNumber   BigInt    @map("report_number")
+  updated        DateTime  @default(now(), map: "DF__datasourc__updat__32AB8735") @db.DateTime
+  updatedBy      String    @map("updated_by") @db.VarChar(55)
+
+  @@map("datasource_devices")
+}
+
+model EndpointManagementSolution {
+  asset       Asset[]
+  description String       @db.VarChar(2000)
+  environment Environment? @relation(fields: [env], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  env         Int?
+  id          Int          @id(map: "pk_ems_id") @default(autoincrement()) @map("ems_id")
+  name        String       @db.VarChar(255)
+
+  @@map("endpoint_management_solution")
+}
+
+model Environment {
+  endpointManagementSolution EndpointManagementSolution[]
+  environmentDesc            String                       @map("environment_desc") @db.VarChar(2000)
+  environmentName            String                       @map("environment_name") @db.VarChar(255)
+  id                         Int                          @id(map: "pk_environment_id") @default(autoincrement()) @map("environment_id")
+
+  @@map("environment")
+}
+
+model Exception {
+  asset           Asset?    @relation(fields: [asset_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  asset_id        BigInt?
+  created         DateTime  @default(now(), map: "DF__exception__creat__3E1D39E1") @db.DateTime
+  exceptionEnd    DateTime? @map("exception_end") @db.SmallDateTime
+  exceptionReason String?   @map("exception_reason") @db.VarChar(4000)
+  exceptionStart  DateTime? @map("exception_start") @db.SmallDateTime
+  exceptionType   String?   @map("exception_type") @db.VarChar(255)
+  id              Int       @id(map: "pk_exception_id") @default(autoincrement()) @map("exception_id")
+  updated         DateTime  @default(now(), map: "DF__exception__updat__3F115E1A") @db.DateTime
+  updatedBy       String    @map("updated_by") @db.VarChar(55)
+
+  @@map("exception")
+}
+
+model IpAddress {
+  asset                    Asset?              @relation(fields: [asset_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  asset_id                 BigInt?
+  assetNetworkDetails      AssetNetworkDetail? @relation(fields: [asset_network_details_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  asset_network_details_id BigInt?
+  created                  DateTime            @default(now(), map: "DF__ip_addres__creat__65370702") @db.DateTime
+  dnsName                  String?             @map("dns_name") @db.VarChar(255)
+  id                       Int                 @id(map: "pk_ip_id") @default(autoincrement()) @map("ip_id")
+  ip                       String              @db.VarChar(45)
+  isPrimary                Boolean             @default(true, map: "DF__ip_addres__is_pr__6442E2C9") @map("is_primary")
+  subnetPurpose            String?             @map("subnet_purpose") @db.VarChar(15)
+  typeField                String              @map("type") @db.VarChar(25)
+  updated                  DateTime            @default(now(), map: "DF__ip_addres__updat__662B2B3B") @db.DateTime
+  updatedBy                String?             @map("updated_by") @db.VarChar(55)
+
+  @@map("ip_address")
+}
+
+model KeyFieldMetric {
+  columnName                  String    @map("column_name") @db.VarChar(255)
+  columnValue                 String    @map("column_value") @db.VarChar(255)
+  created                     DateTime  @default(now(), map: "DF__key_field__creat__3A4CA8FD") @db.DateTime
+  errorIfPercentChangeExceeds Float     @default(1, map: "DF__key_field__error__395884C4") @map("error_if_percent_change_exceeds")
+  id                          Int       @id(map: "pk_key_field_metric") @default(autoincrement()) @map("key_field_metric_id") @db.SmallInt
+  lastPassedValidation        DateTime? @map("last_passed_validation") @db.SmallDateTime
+  note                        String?   @db.VarChar(4000)
+  statisticOperation          String    @default("SUM", map: "DF__key_field__stati__367C1819") @map("statistic_operation") @db.VarChar(15)
+  tableName                   String    @map("table_name") @db.VarChar(255)
+  updated                     DateTime  @default(now(), map: "DF__key_field__updat__3B40CD36") @db.DateTime
+  updatedBy                   String    @map("updated_by") @db.VarChar(75)
+  valueCount                  Int       @default(0, map: "DF__key_field__value__37703C52") @map("value_count")
+  warnIfPercentChangeExceeds  Float     @default(0.05, map: "DF__key_field__warn___3864608B") @map("warn_if_percent_change_exceeds")
+
+  @@map("key_field_metric")
+}
+
+model MaintenanceWindow {
+  asset                            Asset?    @relation(fields: [asset_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  asset_id                         BigInt?
+  created                          DateTime  @default(now(), map: "DF__maintenan__creat__05D8E0BE") @db.DateTime
+  id                               BigInt    @id(map: "pk_asset_maintenance_window_id") @default(autoincrement()) @map("asset_maintenance_window_id")
+  maintWindowAvailableDayOfWeek    String?   @map("maint_window_available_day_of_week") @db.Char(14)
+  maintWindowAvailableMonths       String?   @map("maint_window_available_months") @db.VarChar(25)
+  maintWindowAvailableWeeksOfMonth String?   @map("maint_window_available_weeks_of_month") @db.VarChar(10)
+  maintWindowCloseTime             String?   @map("maint_window_close_time") @db.Char(5)
+  maintWindowLastInside            DateTime? @map("maint_window_last_inside") @db.SmallDateTime
+  maintWindowLevelOfSupport        String?   @map("maint_window_level_of_support") @db.VarChar(75)
+  maintWindowOpenTime              String?   @map("maint_window_open_time") @db.Char(5)
+  updated                          DateTime  @default(now(), map: "DF__maintenan__updat__06CD04F7") @db.DateTime
+  updatedBy                        String    @map("updated_by") @db.VarChar(55)
+
+  @@map("maintenance_window")
+}
+
+model OperationsCalendar {
+  asset                    Asset?                    @relation(fields: [asset_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  asset_id                 BigInt?
+  changeCoordinator        String?                   @map("change_coordinator") @db.VarChar(50)
+  changeManager            String?                   @map("change_manager") @db.VarChar(50)
+  changeRequest            String?                   @map("change_request") @db.VarChar(50)
+  contact                  Contact?                  @relation(fields: [primary_contact_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  primary_contact_id       Int?
+  created                  DateTime                  @default(now(), map: "DF__operation__creat__5D95E53A") @db.DateTime
+  developmentManager       String?                   @map("development_manager") @db.VarChar(50)
+  id                       Int                       @id(map: "pk_operatons_calendar_id") @default(autoincrement()) @map("calendar_id")
+  lastPatched              DateTime?                 @map("last_patched") @db.DateTime
+  locked                   DateTime?                 @db.DateTime
+  lockedBy                 String?                   @map("locked_by") @db.VarChar(50)
+  note                     String?                   @db.VarChar(4000)
+  operationsCalendarStatus OperationsCalendarStatus? @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  status_id                Int?
+  projectManager           String?                   @map("project_manager") @db.VarChar(50)
+  reasonCode               Int?                      @map("reason_code")
+  scheduled                DateTime?                 @db.SmallDateTime
+  scheduledBy              String?                   @map("scheduled_by") @db.VarChar(50)
+  serviceId                Int?                      @map("service_id")
+  technicalLead            String?                   @map("technical_lead") @db.VarChar(50)
+  updated                  DateTime                  @default(now(), map: "DF__operation__updat__5E8A0973") @db.DateTime
+  updatedBy                String?                   @map("updated_by") @db.VarChar(50)
+
+  @@map("operations_calendar")
+}
+
+model OperationsCalendarStatus {
+  id                 Int                  @id(map: "pk_operations_calendar_status_id") @default(autoincrement()) @map("status_id")
+  operationsCalendar OperationsCalendar[]
+  status             String?              @db.VarChar(50)
+
+  @@map("operations_calendar_status")
+}
+
+model PatchChannel {
+  created                                     DateTime                                      @default(now(), map: "DF__patch_cha__creat__10566F31") @db.DateTime
+  id                                          Int                                           @id(map: "pk_patch_channel_id") @default(autoincrement()) @map("patch_channel_id")
+  isUserSelectable                            Boolean                                       @default(true, map: "DF__patch_cha__is_us__0F624AF8") @map("is_user_selectable")
+  name                                        String                                        @db.VarChar(255)
+  note                                        String?                                       @db.VarChar(3500)
+  operatingSystem                             String                                        @map("operating_system") @db.VarChar(15)
+  patchChannelFixlet                          PatchChannelFixlet[]
+  subMgmtBigfixRequestPatchChannelIncludeList SubMgmtBigfixRequestPatchChannelIncludeList[]
+  updated                                     DateTime                                      @default(now(), map: "DF__patch_cha__updat__114A936A") @db.DateTime
+  updatedBy                                   String                                        @map("updated_by") @db.VarChar(55)
+
+  @@map("patch_channel")
+}
+
+model PatchChannelFixlet {
+  attestationHostFixlet        AttestationHostFixlet[]
+  commonPlatformEnumerationTag String?                 @map("common_platform_enumeration_tag") @db.VarChar(4000)
+  created                      DateTime                @default(now(), map: "DF__patch_cha__creat__14270015") @db.DateTime
+  fixletCategory               String?                 @map("fixlet_category") @db.VarChar(255)
+  fixletName                   String?                 @map("fixlet_name") @db.VarChar(255)
+  fixletSourceReleased         DateTime?               @map("fixlet_source_released") @db.SmallDateTime
+  fixletTag                    String?                 @map("fixlet_tag") @db.VarChar(255)
+  id                           Int                     @id(clustered: false, map: "pk_patch_channel_fixlet_id") @default(autoincrement()) @map("patch_channel_fixlet_id")
+  patchChannel                 PatchChannel?           @relation(fields: [patch_channel_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  patch_channel_id             Int?
+  relevantCount                String?                 @map("relevant_count") @db.VarChar(255)
+  site                         String?                 @db.VarChar(255)
+  updated                      DateTime                @default(now(), map: "DF__patch_cha__updat__151B244E") @db.DateTime
+  updatedBy                    String                  @map("updated_by") @db.VarChar(75)
+
+  @@map("patch_channel_fixlet")
+}
+
+model RebootWindow {
+  asset                             Asset?   @relation(fields: [asset_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  asset_id                          BigInt?
+  created                           DateTime @default(now(), map: "DF__reboot_wi__creat__0A9D95DB") @db.DateTime
+  id                                BigInt   @id(map: "pk_reboot_window_id") @default(autoincrement()) @map("reboot_window_id")
+  rebootWindowAvailableDayOfWeek    String?  @map("reboot_window_available_day_of_week") @db.Char(14)
+  rebootWindowAvailableMonths       String?  @map("reboot_window_available_months") @db.VarChar(25)
+  rebootWindowAvailableWeeksOfMonth String?  @map("reboot_window_available_weeks_of_month") @db.VarChar(10)
+  rebootWindowCloseTime             String?  @map("reboot_window_close_time") @db.Char(5)
+  rebootWindowOpenTime              String?  @map("reboot_window_open_time") @db.Char(5)
+  updated                           DateTime @default(now(), map: "DF__reboot_wi__updat__0B91BA14") @db.DateTime
+
+  @@map("reboot_window")
+}
+
+model SubMgmtBigfixRequestPatchChannelIncludeList {
+  id                     Int              @id(map: "pk_sub_mgmt_bigfix_request_patch_channel_include_list_id") @default(autoincrement()) @map("sub_mgmt_bigfix_request_patch_channel_include_list_id")
+  patchChannel           PatchChannel     @relation(fields: [patch_channel_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  patch_channel_id       Int
+  subMgmtChangeLog       SubMgmtChangeLog @relation(fields: [sub_mgmt_change_log_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  sub_mgmt_change_log_id Int
+
+  @@map("sub_mgmt_bigfix_request_patch_channel_include_list")
+}
+
+model SubMgmtChangeLog {
+  action                                      String                                        @db.Char(3)
+  asset                                       Asset?                                        @relation(fields: [asset_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  asset_id                                    BigInt?
+  bigfixRequest                               BigfixRequest?                                @relation(fields: [bigfix_request_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  bigfix_request_id                           BigInt?
+  created                                     DateTime                                      @default(now(), map: "DF__sub_mgmt___creat__1BC821DD") @db.DateTime
+  hostname                                    String                                        @db.VarChar(255)
+  id                                          Int                                           @id(map: "pk_sub_mgmt_change_log_id") @default(autoincrement()) @map("sub_mgmt_change_log_id")
+  patchChannelIncludeList                     String                                        @map("patch_channel_include_list") @db.VarChar(8000)
+  subMgmtBigfixRequestPatchChannelIncludeList SubMgmtBigfixRequestPatchChannelIncludeList[]
+  subMgmtChangeLogStatus                      SubMgmtChangeLogStatus                        @relation(fields: [status], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  status                                      Int
+  updated                                     DateTime                                      @default(now(), map: "DF__sub_mgmt___updat__1CBC4616") @db.DateTime
+  updatedBy                                   String                                        @map("updated_by") @db.VarChar(55)
+
+  @@map("sub_mgmt_change_log")
+}
+
+model SubMgmtChangeLogStatus {
+  id               Int                @id(map: "pk_sub_mgmt_change_log_status_id") @default(autoincrement()) @map("sub_mgmt_change_log_status_id")
+  status           String             @db.VarChar(15)
+  subMgmtChangeLog SubMgmtChangeLog[]
+
+  @@map("sub_mgmt_change_log_status")
+}
+
+model Subnet {
+  created   DateTime @default(now(), map: "DF__subnet__created__6CD828CA") @db.DateTime
+  id        String   @id @unique(map: "UQ__subnet__82E427B491B2FC6F", clustered: true) @default(cuid()) @map("subnet_range") @db.VarChar(55)
+  isActive  Boolean  @default(true, map: "DF__subnet__is_activ__6BE40491") @map("is_active")
+  note      String?  @db.VarChar(4000)
+  purpose   String   @default("dmz", map: "DF__subnet__purpose__6AEFE058") @db.VarChar(15)
+  updated   DateTime @default(now(), map: "DF__subnet__updated__6DCC4D03") @db.DateTime
+  updatedBy String   @default("user_name()", map: "DF__subnet__updated___6EC0713C") @map("updated_by") @db.VarChar(25)
+
+  @@map("subnet")
+}
+
+model TssChangeLog {
+  action                          String             @db.Char(3)
+  applyOn                         DateTime?          @map("apply_on") @db.SmallDateTime
+  applyOnNextScheduledMaintWindow Boolean            @default(false, map: "DF__tss_chang__apply__2A164134") @map("apply_on_next_scheduled_maint_window")
+  asset                           Asset?             @relation(fields: [asset_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  asset_id                        BigInt?
+  bigfixRequest                   BigfixRequest?     @relation(fields: [bigfix_request_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  bigfix_request_id               BigInt?
+  created                         DateTime           @default(now(), map: "DF__tss_chang__creat__2B0A656D") @db.DateTime
+  id                              Int                @id(map: "pk_tss_change_log_id") @default(autoincrement()) @map("tss_change_log_id")
+  remediationWindowHours          Int                @default(4, map: "DF__tss_chang__remed__29221CFB") @map("remediation_window_hours") @db.TinyInt
+  tssChangeLogStatus              TssChangeLogStatus @relation(fields: [status], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  status                          Int
+  tssIncludeList                  String?            @map("tss_include_list") @db.VarChar(8000)
+  updated                         DateTime           @default(now(), map: "DF__tss_chang__updat__2BFE89A6") @db.DateTime
+  updatedBy                       String             @map("updated_by") @db.VarChar(55)
+
+  @@map("tss_change_log")
+}
+
+model TssChangeLogStatus {
+  id           Int            @id(map: "pk_tss_change_log_status_id") @default(autoincrement()) @map("tss_change_log_status_id")
+  status       String         @db.VarChar(15)
+  tssChangeLog TssChangeLog[]
+
+  @@map("tss_change_log_status")
+}

@@ -1,0 +1,37 @@
+import { ApplicationContact } from "../applicationContact/ApplicationContact";
+import { ApplicationDeployment } from "../applicationDeployment/ApplicationDeployment";
+import { ApplicationLifecycleDetail } from "../applicationLifecycleDetail/ApplicationLifecycleDetail";
+import { ApplicationOrganization } from "../applicationOrganization/ApplicationOrganization";
+import { ApplicationSupportDetail } from "../applicationSupportDetail/ApplicationSupportDetail";
+import { Attestation } from "../attestation/Attestation";
+
+export type Application = {
+  accessesInternet: boolean | null;
+  applicationContact?: Array<ApplicationContact>;
+  applicationDeployment?: Array<ApplicationDeployment>;
+  applicationId: string;
+  applicationLifecycleDetails?: Array<ApplicationLifecycleDetail>;
+  applicationOrganization?: Array<ApplicationOrganization>;
+  applicationSupportDetails?: Array<ApplicationSupportDetail>;
+  attestation?: Array<Attestation>;
+  businessName: string | null;
+  category: string | null;
+  confidentialityRating: string | null;
+  created: Date;
+  description: string | null;
+  hasPersonalConfidentialInfo: boolean | null;
+  hasProtectedHealthInfo: boolean | null;
+  id: number;
+  isLifeSustaining: boolean | null;
+  isSubjectToPciCompliance: boolean | null;
+  isSubjectToSoxCompliance: boolean | null;
+  name: string | null;
+  overrideServerValidation: string | null;
+  shortName: string | null;
+  status: string | null;
+  subCategory: string | null;
+  updated: Date;
+  updatedBy: string;
+  version: string | null;
+  websiteUrl: string | null;
+};

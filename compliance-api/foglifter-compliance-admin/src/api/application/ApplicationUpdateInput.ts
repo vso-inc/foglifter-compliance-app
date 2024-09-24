@@ -1,0 +1,34 @@
+import { ApplicationContactUpdateManyWithoutApplicationsInput } from "./ApplicationContactUpdateManyWithoutApplicationsInput";
+import { ApplicationDeploymentUpdateManyWithoutApplicationsInput } from "./ApplicationDeploymentUpdateManyWithoutApplicationsInput";
+import { ApplicationLifecycleDetailUpdateManyWithoutApplicationsInput } from "./ApplicationLifecycleDetailUpdateManyWithoutApplicationsInput";
+import { ApplicationOrganizationUpdateManyWithoutApplicationsInput } from "./ApplicationOrganizationUpdateManyWithoutApplicationsInput";
+import { ApplicationSupportDetailUpdateManyWithoutApplicationsInput } from "./ApplicationSupportDetailUpdateManyWithoutApplicationsInput";
+import { AttestationUpdateManyWithoutApplicationsInput } from "./AttestationUpdateManyWithoutApplicationsInput";
+
+export type ApplicationUpdateInput = {
+  accessesInternet?: boolean | null;
+  applicationContact?: ApplicationContactUpdateManyWithoutApplicationsInput;
+  applicationDeployment?: ApplicationDeploymentUpdateManyWithoutApplicationsInput;
+  applicationId?: string;
+  applicationLifecycleDetails?: ApplicationLifecycleDetailUpdateManyWithoutApplicationsInput;
+  applicationOrganization?: ApplicationOrganizationUpdateManyWithoutApplicationsInput;
+  applicationSupportDetails?: ApplicationSupportDetailUpdateManyWithoutApplicationsInput;
+  attestation?: AttestationUpdateManyWithoutApplicationsInput;
+  businessName?: string | null;
+  category?: string | null;
+  confidentialityRating?: string | null;
+  description?: string | null;
+  hasPersonalConfidentialInfo?: boolean | null;
+  hasProtectedHealthInfo?: boolean | null;
+  isLifeSustaining?: boolean | null;
+  isSubjectToPciCompliance?: boolean | null;
+  isSubjectToSoxCompliance?: boolean | null;
+  name?: string | null;
+  overrideServerValidation?: string | null;
+  shortName?: string | null;
+  status?: string | null;
+  subCategory?: string | null;
+  updatedBy?: string;
+  version?: string | null;
+  websiteUrl?: string | null;
+};

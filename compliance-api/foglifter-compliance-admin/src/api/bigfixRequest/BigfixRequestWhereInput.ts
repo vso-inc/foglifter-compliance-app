@@ -1,0 +1,31 @@
+import { IntNullableFilter } from "../../util/IntNullableFilter";
+import { AssetWhereUniqueInput } from "../asset/AssetWhereUniqueInput";
+import { IntFilter } from "../../util/IntFilter";
+import { BigfixRequestTypeWhereUniqueInput } from "../bigfixRequestType/BigfixRequestTypeWhereUniqueInput";
+import { DateTimeFilter } from "../../util/DateTimeFilter";
+import { StringNullableFilter } from "../../util/StringNullableFilter";
+import { BigIntFilter } from "../../util/BigIntFilter";
+import { StringFilter } from "../../util/StringFilter";
+import { SubMgmtChangeLogListRelationFilter } from "../subMgmtChangeLog/SubMgmtChangeLogListRelationFilter";
+import { TssChangeLogListRelationFilter } from "../tssChangeLog/TssChangeLogListRelationFilter";
+
+export type BigfixRequestWhereInput = {
+  actionScriptId?: IntNullableFilter;
+  asset?: AssetWhereUniqueInput;
+  bigfixEnvironment?: IntFilter;
+  bigfixRequestType?: BigfixRequestTypeWhereUniqueInput;
+  computerId?: IntNullableFilter;
+  computerStatus?: IntNullableFilter;
+  created?: DateTimeFilter;
+  httpResponse?: StringNullableFilter;
+  httpResponseMessage?: StringNullableFilter;
+  id?: BigIntFilter;
+  request?: StringNullableFilter;
+  requestComputerSettings?: StringNullableFilter;
+  requestStatus?: StringFilter;
+  response?: StringNullableFilter;
+  subMgmtChangeLog?: SubMgmtChangeLogListRelationFilter;
+  tssChangeLog?: TssChangeLogListRelationFilter;
+  updated?: DateTimeFilter;
+  updatedBy?: StringFilter;
+};
