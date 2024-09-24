@@ -1,0 +1,34 @@
+import { Application } from "../application/Application";
+import { AttestationHost } from "../attestationHost/AttestationHost";
+import { AttestationType } from "../attestationType/AttestationType";
+
+export type Attestation = {
+  alternateContactEmail: string | null;
+  alternateContactNuid: string | null;
+  application?: Application;
+  attestationHost?: Array<AttestationHost>;
+  attestationType?: AttestationType;
+  caseId: string | null;
+  connectedToAThirdPartySystem: boolean;
+  created: Date;
+  guid: string;
+  hasSensitiveData: boolean;
+  id: number;
+  impactedRegion: string | null;
+  isEmergencyRequest: boolean;
+  isPermanentRequest: boolean;
+  justification: string;
+  longTermSolution: string | null;
+  mitigatingCompensatingControls: string | null;
+  owningOrganization: string | null;
+  primaryContactEmail: string;
+  primaryContactNuid: string;
+  remediationPlan: string | null;
+  remediationPlanTargetedCompletion: Date | null;
+  response: string | null;
+  riskManagementOption: string | null;
+  sentToThirdParty: Date | null;
+  status: string;
+  updated: Date;
+  updatedBy: string;
+};

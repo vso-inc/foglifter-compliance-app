@@ -1,0 +1,31 @@
+import { SortOrder } from "../../util/SortOrder";
+
+export type AttestationOrderByInput = {
+  alternateContactEmail?: SortOrder;
+  alternateContactNuid?: SortOrder;
+  app_id?: SortOrder;
+  attestation_type_id?: SortOrder;
+  caseId?: SortOrder;
+  connectedToAThirdPartySystem?: SortOrder;
+  created?: SortOrder;
+  guid?: SortOrder;
+  hasSensitiveData?: SortOrder;
+  id?: SortOrder;
+  impactedRegion?: SortOrder;
+  isEmergencyRequest?: SortOrder;
+  isPermanentRequest?: SortOrder;
+  justification?: SortOrder;
+  longTermSolution?: SortOrder;
+  mitigatingCompensatingControls?: SortOrder;
+  owningOrganization?: SortOrder;
+  primaryContactEmail?: SortOrder;
+  primaryContactNuid?: SortOrder;
+  remediationPlan?: SortOrder;
+  remediationPlanTargetedCompletion?: SortOrder;
+  response?: SortOrder;
+  riskManagementOption?: SortOrder;
+  sentToThirdParty?: SortOrder;
+  status?: SortOrder;
+  updated?: SortOrder;
+  updatedBy?: SortOrder;
+};

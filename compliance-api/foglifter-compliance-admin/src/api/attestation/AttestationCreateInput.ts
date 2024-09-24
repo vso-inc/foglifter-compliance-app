@@ -1,0 +1,31 @@
+import { ApplicationWhereUniqueInput } from "../application/ApplicationWhereUniqueInput";
+import { AttestationHostCreateNestedManyWithoutAttestationsInput } from "./AttestationHostCreateNestedManyWithoutAttestationsInput";
+import { AttestationTypeWhereUniqueInput } from "../attestationType/AttestationTypeWhereUniqueInput";
+
+export type AttestationCreateInput = {
+  alternateContactEmail?: string | null;
+  alternateContactNuid?: string | null;
+  application: ApplicationWhereUniqueInput;
+  attestationHost?: AttestationHostCreateNestedManyWithoutAttestationsInput;
+  attestationType: AttestationTypeWhereUniqueInput;
+  caseId?: string | null;
+  connectedToAThirdPartySystem: boolean;
+  guid: string;
+  hasSensitiveData: boolean;
+  impactedRegion?: string | null;
+  isEmergencyRequest: boolean;
+  isPermanentRequest: boolean;
+  justification: string;
+  longTermSolution?: string | null;
+  mitigatingCompensatingControls?: string | null;
+  owningOrganization?: string | null;
+  primaryContactEmail: string;
+  primaryContactNuid: string;
+  remediationPlan?: string | null;
+  remediationPlanTargetedCompletion?: Date | null;
+  response?: string | null;
+  riskManagementOption?: string | null;
+  sentToThirdParty?: Date | null;
+  status: string;
+  updatedBy: string;
+};
